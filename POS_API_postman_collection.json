@@ -1,0 +1,197 @@
+{
+  "info": {
+    "name": "Labo3 LOG430 API Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "pos-api-collection-20250709040332"
+  },
+  "item": [
+    {
+      "name": "Connexion",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nom\": \"Bob\",\n  \"mot_de_passe\": \"1234\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/v1/connexion",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "connexion"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Afficher produits",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8000/api/v1/employe/produits",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "employe",
+            "produits"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Acheter produits",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <token>"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"produits\": [\n    {\n      \"produit_id\": 1,\n      \"quantite\": 2\n    },\n    {\n      \"produit_id\": 3,\n      \"quantite\": 1\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/v1/employe/acheter/1",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "employe",
+            "acheter",
+            "1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Verifier stock",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer <token>"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8000/api/v1/employe/stock/1/magasin/1",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "employe",
+            "stock",
+            "1",
+            "magasin",
+            "1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Stock par magasin",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8000/api/v1/employe/magasin/2/produits",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "employe",
+            "magasin",
+            "2",
+            "produits"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Stock central",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8000/api/v1/employe/stockcentral/produits",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "employe",
+            "stockcentral",
+            "produits"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Reapprovisionnement",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:8000/api/v1/employe/reapprovisionner/produit/1/quantite/5/magasin/1",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "employe",
+            "reapprovisionner",
+            "produit",
+            "1",
+            "quantite",
+            "5",
+            "magasin",
+            "1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Creer rapport",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"region\": \"Montr\\u00e9al\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/v1/gestionnaire/rapports",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "gestionnaire",
+            "rapports"
+          ]
+        }
+      }
+    }
+  ]
+}

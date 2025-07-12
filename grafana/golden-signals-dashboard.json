@@ -1,0 +1,102 @@
+{
+    "id": null,
+    "title": "FastAPI - 4 Golden Signals",
+    "tags": ["fastapi", "golden signals", "monitoring"],
+    "timezone": "browser",
+    "schemaVersion": 30,
+    "version": 1,
+    "refresh": "5s",
+    "panels": [
+      {
+        "title": "Trafic - Requêtes par seconde",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "sum(rate(http_server_requests_total[1m]))",
+            "format": "time_series",
+            "legendFormat": "RPS",
+            "interval": ""
+          }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 6, "h": 5 }
+      },
+      {
+        "title": "Latence - Temps de réponse moyen (ms)",
+        "type": "graph",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le)) * 1000",
+            "legendFormat": "95e percentile",
+            "interval": ""
+          }
+        ],
+        "yaxes": [
+          { "format": "ms", "label": "Durée", "logBase": 1 },
+          { "format": "short", "logBase": 1 }
+        ],
+        "gridPos": { "x": 6, "y": 0, "w": 12, "h": 5 }
+      },
+      {
+        "title": "Erreurs HTTP",
+        "type": "barchart",
+        "targets": [
+          {
+            "expr": "sum(rate(http_server_requests_total{status=~\"5..\"}[1m]))",
+            "legendFormat": "500",
+            "interval": ""
+          },
+          {
+            "expr": "sum(rate(http_server_requests_total{status=~\"4..\"}[1m]))",
+            "legendFormat": "400",
+            "interval": ""
+          }
+        ],
+        "gridPos": { "x": 0, "y": 5, "w": 12, "h": 5 }
+      },
+      {
+        "title": "Saturation CPU container (FastAPI)",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "rate(container_cpu_usage_seconds_total{name=~\"backend.*\"}[1m]) * 100",
+            "legendFormat": "CPU (%)",
+            "interval": ""
+          }
+        ],
+        "gridPos": { "x": 12, "y": 5, "w": 12, "h": 5 },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "orange", "value": 75 },
+                { "color": "red", "value": 90 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "title": "Mémoire utilisée (backend)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "container_memory_usage_bytes{name=~\"backend.*\"} / 1024 / 1024",
+            "legendFormat": "RAM (MiB)",
+            "interval": ""
+          }
+        ],
+        "gridPos": { "x": 0, "y": 10, "w": 6, "h": 5 },
+        "fieldConfig": {
+          "defaults": {
+            "unit": "decbytes"
+          }
+        }
+      }
+    ]
+  }
+  

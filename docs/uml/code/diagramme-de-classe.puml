@@ -1,0 +1,58 @@
+@startuml
+class Utilisateur {
+  +id: int
+  +nom: str
+  +mot_de_passe: str
+  +role: RoleEnum
+}
+
+enum RoleEnum {
+  employe
+  gestionnaire
+  responsable
+}
+
+class Product {
+  +id: int
+  +name: str
+  +price: float
+  +category: str
+}
+
+class Magasin {
+  +id: int
+  +nom: str
+  +region: str
+}
+
+class ProduitParMagasin {
+  +produit_id: int
+  +magasin_id: int
+  +quantite: int
+}
+
+class Vente {
+  +id: int
+  +produit_id: int
+  +magasin_id: int
+  +quantite: int
+  +prix_total: float
+  +date: datetime
+}
+
+class Reaprovisionnement {
+  +id: int
+  +produit_id: int
+  +magasin_id: int
+  +quantite: int
+  +approuved: bool
+}
+
+Utilisateur --> RoleEnum
+Magasin "1" -- "0..*" ProduitParMagasin
+Product "1" -- "0..*" ProduitParMagasin
+Product "1" -- "0..*" Vente
+Magasin "1" -- "0..*" Vente
+Product "1" -- "0..*" Reaprovisionnement
+Magasin "1" -- "0..*" Reaprovisionnement
+@enduml

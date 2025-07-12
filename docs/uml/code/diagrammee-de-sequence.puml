@@ -1,0 +1,18 @@
+@startuml
+actor Employe
+participant "Frontend" as F
+participant "API Backend" as B
+database "SQLite" as DB
+
+Employe -> F : Saisie identifiants
+F -> B : POST /connexion (nom, mot_de_passe)
+B -> DB : Vérifier utilisateur
+DB --> B : Utilisateur OK
+B --> F : Token JWT
+
+Employe -> F : Acheter produit
+F -> B : POST /acheter
+B -> DB : Vérifier stock\\nEnregistrer vente
+DB --> B : OK
+B --> F : Confirmation achat
+@enduml

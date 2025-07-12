@@ -1,0 +1,29 @@
+@startuml deployment-pos
+
+!define RECTANGLE class
+skinparam componentStyle rectangle
+skinparam defaultTextAlignment center
+
+' Clients
+node "Navigateur Web\n(Client)" {
+  component "Interface utilisateur\n(React + Vite)"
+}
+
+' CI/CD Runner
+node "GitHub Actions\nCI/CD Pipeline" {
+  component "Lint, Test, Build,\nDocker Push"
+}
+
+' Serveur applicatif
+node "Serveur Web\n(contenerisé Docker)" {
+  component "Backend API\n(FastAPI - Python)"
+  database "PostgreSQL\nBase de données" as DB
+  component "Frontend static\n(dist/ via Nginx ou Vite dev)"
+}
+
+' Flux
+"Interface utilisateur\n(React + Vite)" --> "Backend API\n(FastAPI - Python)" : HTTP (CORS + JWT)
+"Backend API\n(FastAPI - Python)" --> DB : ORM (SQLAlchemy)
+"GitHub Actions\nCI/CD Pipeline" --> "Serveur Web\n(contenerisé Docker)" : Docker Push / Pull
+
+@enduml

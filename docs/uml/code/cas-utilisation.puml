@@ -1,0 +1,25 @@
+@startuml usecase-pos
+left to right direction
+
+actor Employe
+actor Gestionnaire
+actor Responsable
+
+rectangle "Système POS" {
+  Employe --> (Se connecter)
+  Employe --> (Consulter produits)
+  Employe --> (Acheter produits)
+  Employe --> (Demander réapprovisionnement)
+
+  Gestionnaire --> (Se connecter)
+  Gestionnaire --> (Mettre à jour produit)
+  Gestionnaire --> (Approuver demande)
+  Gestionnaire --> (Consulter stock)
+  Gestionnaire --> (Supprimer demande)
+
+  Responsable --> (Se connecter)
+  Responsable --> (Générer rapport)
+  Responsable --> (Consulter tableau de bord)
+  Responsable --> (Visualiser tendances)
+}
+@enduml

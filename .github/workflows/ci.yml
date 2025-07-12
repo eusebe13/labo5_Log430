@@ -1,0 +1,81 @@
+name: CI/CD FastAPI + React
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ci-cd:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: app_db
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DATABASE_URL: postgresql://user:password@localhost:5432/app_db
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      ## === BACKEND === ##
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Installer les dépendances backend
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Linter backend avec Ruff
+        run: |
+          cd backend
+          ruff check .
+
+      - name: Tester le backend
+        run: |
+          cd backend
+          pytest
+
+      - name: Initialiser la base de données
+        run: |
+          cd backend
+          python app/init_db.py
+
+      - name: Lancer le backend avec Uvicorn (non-bloquant)
+        run: |
+          cd backend
+          nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+
+      ## === FRONTEND === ##
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Installer les dépendances frontend
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Linter le frontend
+        run: |
+          cd frontend
+          npm run lint
