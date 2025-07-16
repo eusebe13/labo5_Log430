@@ -38,6 +38,20 @@ class Utilisateur(Base):
 
     magasin = relationship("Magasin", back_populates="utilisateurs")
 
+class Client(Base):
+    __tablename__ = "clients"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nom = Column(String, nullable=False)
+    prenom = Column(String, nullable=False)
+    email = Column(String, unique=True, index=True, nullable=False)
+    mot_de_passe = Column(String, nullable=False)  # haché
+    adresse = Column(String, nullable=True)
+    telephone = Column(String, nullable=True)
+
+    commandes = relationship("Commande", back_populates="client", cascade="all, delete-orphan")
+    panier = relationship("Panier", back_populates="client", uselist=False, cascade="all, delete-orphan")
+
 class Magasin(Base):
     __tablename__ = 'magasins'
     id = Column(Integer, primary_key=True)
@@ -130,3 +144,100 @@ class AlerteRupture(Base):
     regler = Column(Boolean, default=False)
 
     produit = relationship("Product", back_populates="alertes")
+
+class Commande(Base):
+    __tablename__ = "commandes"
+
+    id = Column(Integer, primary_key=True)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
+    date_commande = Column(DateTime, default=datetime.datetime.utcnow)
+    statut = Column(String, default="en_attente")  # ex : en_attente, payée, annulée
+    total = Column(Float, nullable=False)
+
+    client = relationship("Client", backref="commandes")
+    lignes_commande = relationship("LigneCommande", back_populates="commande", cascade="all, delete")
+
+class LigneCommande(Base):
+    __tablename__ = "lignes_commande"
+
+    id = Column(Integer, primary_key=True)
+    commande_id = Column(Integer, ForeignKey("commandes.id"), nullable=False)
+    produit_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    quantite = Column(Integer, nullable=False)
+    prix_unitaire = Column(Float, nullable=False)
+
+    commande = relationship("Commande", back_populates="lignes_commande")
+    produit = relationship("Product")
+
+class Panier(Base):
+    __tablename__ = "paniers"
+
+    id = Column(Integer, primary_key=True)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=False, unique=True)
+
+    client = relationship("Client", back_populates="panier")
+    articles = relationship("ArticlePanier", back_populates="panier", cascade="all, delete")
+
+class ArticlePanier(Base):
+    __tablename__ = "articles_panier"
+
+    id = Column(Integer, primary_key=True)
+    panier_id = Column(Integer, ForeignKey("paniers.id"), nullable=False)
+    produit_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    quantite = Column(Integer, nullable=False)
+
+    panier = relationship("Panier", back_populates="articles")
+    produit = relationship("Product")
+
+
+# Mise à jour des modèles précédents pour compléter les relations :
+
+class Client(Base):
+    __tablename__ = "clients"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nom = Column(String, nullable=False)
+    prenom = Column(String, nullable=False)
+    email = Column(String, unique=True, index=True, nullable=False)
+    mot_de_passe = Column(String, nullable=False)  # haché
+    adresse = Column(String, nullable=True)
+    telephone = Column(String, nullable=True)
+
+    commandes = relationship("Commande", back_populates="client", cascade="all, delete-orphan")
+    panier = relationship("Panier", back_populates="client", uselist=False, cascade="all, delete-orphan")
+
+
+class Panier(Base):
+    __tablename__ = "paniers"
+
+    id = Column(Integer, primary_key=True)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=False, unique=True)
+
+    client = relationship("Client", back_populates="panier")
+    articles = relationship("ArticlePanier", back_populates="panier", cascade="all, delete")
+
+
+class Commande(Base):
+    __tablename__ = "commandes"
+
+    id = Column(Integer, primary_key=True)
+    client_id = Column(Integer, ForeignKey("clients.id"), nullable=False)
+    date_commande = Column(DateTime, default=datetime.datetime.utcnow)
+    statut = Column(String, default="en_attente")  # ex : en_attente, payée, annulée
+    total = Column(Float, nullable=False)
+
+    client = relationship("Client", back_populates="commandes")
+    lignes_commande = relationship("LigneCommande", back_populates="commande", cascade="all, delete")
+
+
+class LigneCommande(Base):
+    __tablename__ = "lignes_commande"
+
+    id = Column(Integer, primary_key=True)
+    commande_id = Column(Integer, ForeignKey("commandes.id"), nullable=False)
+    produit_id = Column(Integer, ForeignKey("products.id"), nullable=False)
+    quantite = Column(Integer, nullable=False)
+    prix_unitaire = Column(Float, nullable=False)
+
+    commande = relationship("Commande", back_populates="lignes_commande")
+    produit = relationship("Product")
