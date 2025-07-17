@@ -1,195 +1,160 @@
 {
   "info": {
-    "name": "Labo3 LOG430 API Collection",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_postman_id": "pos-api-collection-20250709040332"
+    "name": "KrakenD - GET API v1 Root Endpoints",
+    "_postman_id": "eb5bb0f0-33c6-4e13-b23a-a1a04be5aa6c",
+    "description": "Collection Postman pour tester les endpoints GET / de chaque service via KrakenD (chemin: /api/v1/...)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Connexion",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"nom\": \"Bob\",\n  \"mot_de_passe\": \"1234\"\n}"
-        },
-        "url": {
-          "raw": "http://localhost:8000/api/v1/connexion",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "connexion"
-          ]
-        }
-      }
-    },
-    {
-      "name": "Afficher produits",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "http://localhost:8000/api/v1/employe/produits",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "employe",
-            "produits"
-          ]
-        }
-      }
-    },
-    {
-      "name": "Acheter produits",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer <token>"
-          },
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"produits\": [\n    {\n      \"produit_id\": 1,\n      \"quantite\": 2\n    },\n    {\n      \"produit_id\": 3,\n      \"quantite\": 1\n    }\n  ]\n}"
-        },
-        "url": {
-          "raw": "http://localhost:8000/api/v1/employe/acheter/1",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "employe",
-            "acheter",
-            "1"
-          ]
-        }
-      }
-    },
-    {
-      "name": "Verifier stock",
+      "name": "GET /api/v1/produits/",
       "request": {
         "method": "GET",
         "header": [
           {
-            "key": "Authorization",
-            "value": "Bearer <token>"
+            "key": "X-API-KEY",
+            "value": "my-secret-key"
           }
         ],
         "url": {
-          "raw": "http://localhost:8000/api/v1/employe/stock/1/magasin/1",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "employe",
-            "stock",
-            "1",
-            "magasin",
-            "1"
-          ]
+          "raw": "http://localhost:8081/api/produits/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "produits", ""]
         }
       }
     },
     {
-      "name": "Stock par magasin",
+      "name": "GET /api/v1/stock/",
       "request": {
         "method": "GET",
-        "url": {
-          "raw": "http://localhost:8000/api/v1/employe/magasin/2/produits",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "employe",
-            "magasin",
-            "2",
-            "produits"
-          ]
-        }
-      }
-    },
-    {
-      "name": "Stock central",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "http://localhost:8000/api/v1/employe/stockcentral/produits",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "employe",
-            "stockcentral",
-            "produits"
-          ]
-        }
-      }
-    },
-    {
-      "name": "Reapprovisionnement",
-      "request": {
-        "method": "POST",
-        "url": {
-          "raw": "http://localhost:8000/api/v1/employe/reapprovisionner/produit/1/quantite/5/magasin/1",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "employe",
-            "reapprovisionner",
-            "produit",
-            "1",
-            "quantite",
-            "5",
-            "magasin",
-            "1"
-          ]
-        }
-      }
-    },
-    {
-      "name": "Creer rapport",
-      "request": {
-        "method": "POST",
         "header": [
           {
-            "key": "Content-Type",
-            "value": "application/json"
+            "key": "X-API-KEY",
+            "value": "my-secret-key"
           }
         ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"region\": \"Montr\\u00e9al\"\n}"
-        },
         "url": {
-          "raw": "http://localhost:8000/api/v1/gestionnaire/rapports",
-          "host": [
-            "localhost"
-          ],
-          "port": "8000",
-          "path": [
-            "gestionnaire",
-            "rapports"
-          ]
+          "raw": "http://localhost:8081/api/stock/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "stock", ""]
+        }
+      }
+    },
+    {
+      "name": "GET /api/v1/utilisateurs/",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-KEY",
+            "value": "my-secret-key"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/utilisateurs/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "utilisateurs", ""]
+        }
+      }
+    },
+    {
+      "name": "GET /api/v1/ventes/",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-KEY",
+            "value": "my-secret-key"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/ventes/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "ventes", ""]
+        }
+      }
+    },
+    {
+      "name": "GET /api/v1/client/",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-KEY",
+            "value": "my-secret-key"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/client/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "client", ""]
+        }
+      }
+    },
+    {
+      "name": "GET /api/v1/commande/",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-KEY",
+            "value": "my-secret-key"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/commande/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "commande", ""]
+        }
+      }
+    },
+    {
+      "name": "GET /api/v1/panier/",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-KEY",
+            "value": "my-secret-key"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/panier/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "panier", ""]
+        }
+      }
+    },
+    {
+      "name": "GET /api/v1/rapport/",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-KEY",
+            "value": "my-secret-key"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/rapport/",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "rapport", ""]
         }
       }
     }

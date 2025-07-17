@@ -65,12 +65,25 @@ services:
       - postgres
       - redis
 
-  stock:
+  stock1:
     build:
       context: ./services/stock
-    container_name: stock
+    container_name: stock1
     ports:
       - "8006:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/app_db
+      - REDIS_HOST=redis
+    depends_on:
+      - postgres
+      - redis
+
+  stock2:
+    build:
+      context: ./services/stock
+    container_name: stock2
+    ports:
+      - "8016:8000"
     environment:
       - DATABASE_URL=postgresql://user:password@postgres:5432/app_db
       - REDIS_HOST=redis
@@ -117,7 +130,8 @@ services:
       - panier
       - produits
       - rapport
-      - stock
+      - stock1
+      - stock2
       - utilisateurs
       - ventes
 
@@ -152,6 +166,26 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
+
+  krakend:
+    image: devopsfaith/krakend
+    container_name: krakend
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./krakend.json:/etc/krakend/krakend.json
+    command: ["run", "-c", "/etc/krakend/krakend.json"]
+    depends_on:
+      - client
+      - commande
+      - panier
+      - produits
+      - rapport
+      - stock1
+      - stock2
+      - utilisateurs
+      - ventes
+
 
 volumes:
   pgdata:
