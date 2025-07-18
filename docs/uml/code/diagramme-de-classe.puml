@@ -1,10 +1,4 @@
 @startuml
-class Utilisateur {
-  +id: int
-  +nom: str
-  +mot_de_passe: str
-  +role: RoleEnum
-}
 
 enum RoleEnum {
   employe
@@ -12,47 +6,119 @@ enum RoleEnum {
   responsable
 }
 
-class Product {
-  +id: int
-  +name: str
-  +price: float
-  +category: str
-}
-
 class Magasin {
-  +id: int
-  +nom: str
-  +region: str
+  id: Integer
+  nom: String
+  adresse: String
+  ville: String
+  region: String
 }
 
-class ProduitParMagasin {
-  +produit_id: int
-  +magasin_id: int
-  +quantite: int
+class Utilisateur {
+  id: Integer
+  nom: String
+  mot_de_passe: String
+  role: RoleEnum
+  magasin_id: Integer
+}
+
+class Client {
+  id: Integer
+  nom: String
+  prenom: String
+  email: String
+  mot_de_passe: String
+  adresse: String
+  telephone: String
+}
+
+class Produit {
+  id: Integer
+  name: String
+  category: String
+  price: Float
+}
+
+class Stock {
+  id: Integer
+  magasin_id: Integer
+  produit_id: Integer
+  quantite: Integer
+}
+
+class StockCentral {
+  id: Integer
+  produit_id: Integer
+  quantite: Integer
+  seuil_minimum: Integer
+}
+
+class Panier {
+  id: Integer
+  client_id: Integer
+  total: Float
+}
+
+class ArticlePanier {
+  id: Integer
+  panier_id: Integer
+  produit_id: Integer
+  quantite: Integer
+}
+
+class Commande {
+  id: Integer
+  client_id: Integer
+  statut: String
+  total: Float
+  magasin_id: Integer
+}
+
+class LigneCommande {
+  id: Integer
+  commande_id: Integer
+  produit_id: Integer
+  quantite: Integer
+  prix_unitaire: Float
 }
 
 class Vente {
-  +id: int
-  +produit_id: int
-  +magasin_id: int
-  +quantite: int
-  +prix_total: float
-  +date: datetime
+  id: Integer
+  date: DateTime
+  quantite: Integer
+  prix_total: Float
+  magasin_id: Integer
 }
 
-class Reaprovisionnement {
-  +id: int
-  +produit_id: int
-  +magasin_id: int
-  +quantite: int
-  +approuved: bool
+class RapportTendance {
+  id: Integer
+  region: String
+  total_ventes: Float
 }
 
+
+Utilisateur o-- Magasin
 Utilisateur --> RoleEnum
-Magasin "1" -- "0..*" ProduitParMagasin
-Product "1" -- "0..*" ProduitParMagasin
-Product "1" -- "0..*" Vente
-Magasin "1" -- "0..*" Vente
-Product "1" -- "0..*" Reaprovisionnement
-Magasin "1" -- "0..*" Reaprovisionnement
+
+Magasin *-- Stock
+Stock --> Produit
+
+Magasin *-- Vente
+Vente --> Produit
+
+StockCentral *-- Produit
+Responsable --> StockCentral
+
+Client *-- Panier
+Panier *-- ArticlePanier
+ArticlePanier --> Produit
+
+Client o-- Commande
+Commande *-- LigneCommande
+LigneCommande --> Produit
+
+Commande --> Magasin
+
+RapportTendance --> Magasin
+
 @enduml

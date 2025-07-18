@@ -32,7 +32,7 @@ def init_db():
             commande = Commande(
                 client_id=c["client_id"],
                 statut=c["statut"],
-                total=sum(l["quantite"] * l["prix_unitaire"] for l in c["lignes"])  # auto-calcule total
+                total=sum(ligne["quantite"] * ligne["prix_unitaire"] for ligne in c["lignes"])  # auto-calcule total
             )
             db.add(commande)
             db.flush()  # pour commande.id

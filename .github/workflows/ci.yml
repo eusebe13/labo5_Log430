@@ -1,13 +1,13 @@
-name: CI/CD FastAPI + React
+name: CI/CD FastAPI + React + Gateway + Observabilité
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-  ci-cd:
+  build-and-test:
     runs-on: ubuntu-latest
 
     services:
@@ -25,57 +25,68 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
+      redis:
+        image: redis:alpine
+        ports:
+          - 6379:6379
+
     env:
       DATABASE_URL: postgresql://user:password@localhost:5432/app_db
+      REDIS_HOST: localhost
 
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
 
-      ## === BACKEND === ##
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Installer les dépendances backend
+      - name: Installer et tester tous les services FastAPI
         run: |
-          cd backend
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          for dir in ./services/*/ ; do
+            if [ -f "$dir/requirements.txt" ]; then
+              echo "Traitement de $dir"
+              pip install -r "$dir/requirements.txt"
+              if [ -f "$dir/test/test_main.py" ]; then
+                pytest "$dir/test"
+              fi
+            fi
+          done
 
       - name: Linter backend avec Ruff
         run: |
-          cd backend
-          ruff check .
+          pip install ruff
+          ruff services/
 
-      - name: Tester le backend
-        run: |
-          cd backend
-          pytest
-
-      - name: Initialiser la base de données
-        run: |
-          cd backend
-          python app/init_db.py
-
-      - name: Lancer le backend avec Uvicorn (non-bloquant)
-        run: |
-          cd backend
-          nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 &
-
-      ## === FRONTEND === ##
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Installer les dépendances frontend
+      - name: Installer et tester le frontend React
         run: |
           cd frontend
           npm ci
-
-      - name: Linter le frontend
-        run: |
-          cd frontend
           npm run lint
+          npm run build
+
+      - name: Vérifier la syntaxe du fichier Docker Compose
+        run: docker compose config
+
+      - name: Lancer les conteneurs pour test d’intégration
+        run: |
+          docker compose up -d
+          sleep 20  # Attente du démarrage
+          docker compose ps
+
+      - name: Test K6 (Load Testing)
+        run: |
+          if [ -d "./k6" ]; then
+            docker run --rm -i grafana/k6 run - < ./k6/test.js
+          fi
+
+      - name: Arrêt et nettoyage des conteneurs
+        if: always()
+        run: docker compose down

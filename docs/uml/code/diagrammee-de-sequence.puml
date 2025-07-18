@@ -1,18 +1,32 @@
-@startuml
-actor Employe
-participant "Frontend" as F
-participant "API Backend" as B
-database "SQLite" as DB
+@startuml AchatProduit
 
-Employe -> F : Saisie identifiants
-F -> B : POST /connexion (nom, mot_de_passe)
-B -> DB : Vérifier utilisateur
-DB --> B : Utilisateur OK
-B --> F : Token JWT
+actor Client
+participant "Frontend (React + Nginx)" as Frontend
+participant "KrakenD Gateway" as KrakenD
+participant "Service Magasin (FastAPI)" as Magasin
+participant "Redis (Cache)" as Redis
+database "PostgreSQL (DB magasin)" as DB
 
-Employe -> F : Acheter produit
-F -> B : POST /acheter
-B -> DB : Vérifier stock\\nEnregistrer vente
-DB --> B : OK
-B --> F : Confirmation achat
+Client -> Frontend : Clique sur "Acheter"
+Frontend -> KrakenD : POST /magasin/acheter (avec JWT)
+KrakenD -> Magasin : POST /acheter (token validé)
+
+Magasin -> Redis : GET stock:produit_id
+alt Stock trouvé dans Redis
+    Redis --> Magasin : quantité disponible
+else Stock manquant
+    Magasin -> DB : SELECT * FROM stock WHERE id = ?
+    DB --> Magasin : données du stock
+    Magasin -> Redis : SET stock:produit_id (mise en cache)
+end
+
+Magasin -> DB : UPDATE stock SET quantite = quantite - 1
+Magasin -> DB : INSERT INTO ventes (...)
+
+Magasin -> Redis : DEL stock:produit_id
+
+Magasin --> KrakenD : 200 OK (Achat confirmé)
+KrakenD --> Frontend : 200 OK
+Frontend --> Client : Affiche "Achat réussi"
+
 @enduml

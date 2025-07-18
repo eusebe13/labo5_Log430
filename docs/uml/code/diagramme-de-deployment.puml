@@ -1,29 +1,118 @@
-@startuml deployment-pos
+@startuml Deployment_Labo5_Microservices
 
-!define RECTANGLE class
-skinparam componentStyle rectangle
+' Styles généraux
 skinparam defaultTextAlignment center
-
-' Clients
-node "Navigateur Web\n(Client)" {
-  component "Interface utilisateur\n(React + Vite)"
+skinparam node {
+    BackgroundColor #F5F5F5
+    BorderColor #888888
+}
+skinparam cloud {
+    BackgroundColor #E1ECF4
+}
+skinparam rectangle {
+    BackgroundColor #FFFFFF
+}
+skinparam component {
+    BackgroundColor #FDF6E3
 }
 
-' CI/CD Runner
-node "GitHub Actions\nCI/CD Pipeline" {
-  component "Lint, Test, Build,\nDocker Push"
+title Diagramme de Déploiement — Labo 5 (Architecture Microservices + Gateway + Observabilité)
+
+actor UtilisateurWeb as user
+
+cloud "Navigateur Web" as navigateur {
+    [Client HTTP]
 }
 
-' Serveur applicatif
-node "Serveur Web\n(contenerisé Docker)" {
-  component "Backend API\n(FastAPI - Python)"
-  database "PostgreSQL\nBase de données" as DB
-  component "Frontend static\n(dist/ via Nginx ou Vite dev)"
+node "Conteneur: frontend" as frontend {
+    [Application React (Vite)]
+    [Serveur Nginx]
 }
 
-' Flux
-"Interface utilisateur\n(React + Vite)" --> "Backend API\n(FastAPI - Python)" : HTTP (CORS + JWT)
-"Backend API\n(FastAPI - Python)" --> DB : ORM (SQLAlchemy)
-"GitHub Actions\nCI/CD Pipeline" --> "Serveur Web\n(contenerisé Docker)" : Docker Push / Pull
+cloud "API Gateway" as gateway {
+    node "Conteneur: KrakenD" as krakend {
+        component "krakend.json" 
+        [Routage dynamique]
+        [JWT / API Keys]
+        [CORS / Headers]
+        [Export Prometheus]
+    }
+}
+
+node "Docker Host (Backend Services)" {
+
+    node "Service Authentification" as auth {
+        [main.py]
+        [JWT Token]
+    }
+
+    node "Service Clientèle" as clientele {
+        [Commande, Panier, Client]
+        node "Instance Panier 1" as panier1 {
+            [main.py]
+        }
+        node "Instance Panier 2" as panier2 {
+            [main.py]
+        }
+    }
+
+    node "Service Travailleur" as travailleur {
+        [Employés, Gestionnaires, Responsable]
+        [main.py]
+    }
+
+    node "Service Magasin" as magasin {
+        [Produits, Ventes, Stock, Rapports]
+        [main.py]
+    }
+
+    node "Redis" as redis {
+        [Serveur Redis]
+    }
+
+    database "Base de Données" as db {
+        [PostgreSQL]
+    }
+}
+
+node "Observabilité" as observabilite {
+    node "Prometheus" {
+        [Scrape KrakenD /services]
+    }
+    node "Grafana" {
+        [Dashboards Labo 5]
+    }
+}
+
+' Connexions principales
+user --> navigateur
+navigateur --> frontend
+frontend --> krakend
+krakend --> auth
+krakend --> clientele
+krakend --> travailleur
+krakend --> magasin
+krakend --> observabilite
+
+' Connexions internes
+clientele --> panier1
+clientele --> panier2
+
+auth --> db
+travailleur --> db
+magasin --> db
+panier1 --> db
+panier2 --> db
+
+' Connexions Redis (hors auth)
+travailleur --> redis
+magasin --> redis
+clientele --> redis
+panier1 --> redis
+panier2 --> redis
+
+' Observabilité
+observabilite --> krakend
+grafana --> prometheus
 
 @enduml

@@ -1,25 +1,34 @@
-@startuml usecase-pos
-left to right direction
-
+@startuml
+actor Client
 actor Employe
 actor Gestionnaire
 actor Responsable
 
-rectangle "Système POS" {
-  Employe --> (Se connecter)
-  Employe --> (Consulter produits)
-  Employe --> (Acheter produits)
-  Employe --> (Demander réapprovisionnement)
-
-  Gestionnaire --> (Se connecter)
-  Gestionnaire --> (Mettre à jour produit)
-  Gestionnaire --> (Approuver demande)
-  Gestionnaire --> (Consulter stock)
-  Gestionnaire --> (Supprimer demande)
-
-  Responsable --> (Se connecter)
-  Responsable --> (Générer rapport)
-  Responsable --> (Consulter tableau de bord)
-  Responsable --> (Visualiser tendances)
+rectangle "API Gateway" {
+  usecase "Valider commande\n(/checkout)" as UC1
+  usecase "Consulter commandes\n(/commandes)" as UC2
+  usecase "Rapport consolidé\n(/rapports/ventes)" as UC3
 }
+
+rectangle "Microservices" {
+  actor "Service Panier" as SP
+  actor "Service Produit" as SPR
+  actor "Service Stock" as SS
+  actor "Service Commande" as SC
+}
+
+Client --> UC1
+Employe --> UC1
+Gestionnaire --> UC2
+Responsable --> UC3
+
+UC1 --> SP : récupérer le panier
+SP --> SPR : valider produits
+SP --> SS : vérifier stock
+UC1 --> SS : décrémenter stock
+UC1 --> SC : créer commande
+UC1 --> SP : vider panier
+
+UC2 --> SC : consulter commandes
+UC3 --> SC : générer rapport
 @enduml
