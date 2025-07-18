@@ -58,7 +58,7 @@ jobs:
       - name: Linter backend avec Ruff
         run: |
           pip install ruff
-          ruff services/
+          ruff check services/
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
