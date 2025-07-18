@@ -29,7 +29,7 @@
             "X-Gateway": "LOG430-Gateway"
             }
         },
-    "endpoints": [
+    }, "endpoints": [
         {
             "endpoint": "/api/produits/{path}",
             "method": "GET",

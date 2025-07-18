@@ -96,29 +96,27 @@ class RapportTendance {
   total_ventes: Float
 }
 
+Utilisateur "1" o-- "1" Magasin
+Utilisateur "*" --> "1" RoleEnum
 
-Utilisateur o-- Magasin
-Utilisateur --> RoleEnum
+Magasin "1" *-- "*" Stock
+Stock "*" --> "1" Produit
 
-Magasin *-- Stock
-Stock --> Produit
+Magasin "1" *-- "*" Vente
+Vente "*" --> "1" Produit
 
-Magasin *-- Vente
-Vente --> Produit
+StockCentral "*" *-- "1" Produit
 
-StockCentral *-- Produit
-Responsable --> StockCentral
+Client "1" *-- "*" Panier
+Panier "1" *-- "*" ArticlePanier
+ArticlePanier "*" --> "1" Produit
 
-Client *-- Panier
-Panier *-- ArticlePanier
-ArticlePanier --> Produit
+Client "1" o-- "*" Commande
+Commande "1" *-- "*" LigneCommande
+LigneCommande "*" --> "1" Produit
 
-Client o-- Commande
-Commande *-- LigneCommande
-LigneCommande --> Produit
+Commande "*" --> "1" Magasin
 
-Commande --> Magasin
-
-RapportTendance --> Magasin
+RapportTendance "*" --> "1" Magasin
 
 @enduml
