@@ -78,7 +78,7 @@ jobs:
       - name: Test K6 (Load Testing)
         run: |
           if [ -d "./k6" ]; then
-            docker run --rm -i grafana/k6 run - < ./k6/test.js
+            docker run --rm -i grafana/k6 run - < ./k6/stock-test.js
           fi
 
       - name: Arrêt et nettoyage des conteneurs
