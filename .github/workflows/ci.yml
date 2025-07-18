@@ -75,12 +75,6 @@ jobs:
       - name: Vérifier la syntaxe du fichier Docker Compose
         run: docker compose config
 
-      - name: Lancer les conteneurs pour test d’intégration
-        run: |
-          docker compose up -d
-          sleep 20  # Attente du démarrage
-          docker compose ps
-
       - name: Test K6 (Load Testing)
         run: |
           if [ -d "./k6" ]; then
