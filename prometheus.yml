@@ -10,6 +10,7 @@ scrape_configs:
           - 'panier:8000'
           - 'produits:8000'
           - 'rapport:8000'
-          - 'stock:8000'
+          - 'stock1:8000'
+          - 'stock2:8000'
           - 'utilisateurs:8000'
           - 'ventes:8000'

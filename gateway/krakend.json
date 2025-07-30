@@ -1,147 +1,219 @@
 {
-    "$schema": "https://www.krakend.io/schema/v3.json",
-    "version": 3,
-    "name": "krakend-gateway",
-    "port": 8081,
-    "timeout": "3000ms",
-    "cache_ttl": "300s",
-    "output_encoding": "json",
-    "extra_config": {
-        "github_com/devopsfaith/krakend/logging": {
-            "level": "DEBUG",
-            "prefix": "[KRAKEND]",
-            "syslog": false,
-            "stdout": true
-        },
-        "github_com/devopsfaith/krakend/validator": {
-            "name": "api-key",
-            "algorithm": "HS256",
-            "key": "mon_super_secret"
-        },
-        "github_com/devopsfaith/krakend/proxy": {
-            "static_headers": {
-                "X-API-KEY": "my-secret-key"
-            }
-        },
-        "github_com/devopsfaith/krakend/router": {
-            "custom_http_headers": {
-            "X-Powered-By": "KrakenD",
-            "X-Gateway": "LOG430-Gateway"
-            }
-        },
-    }, "endpoints": [
+  "$schema": "https://www.krakend.io/schema/v3.json",
+  "version": 3,
+  "name": "krakend-gateway",
+  "port": 8080,
+  "timeout": "3000ms",
+  "cache_ttl": "300s",
+  "output_encoding": "json",
+  "extra_config": {
+    "github_com/devopsfaith/krakend/logging": {
+      "level": "DEBUG",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true
+    },
+    "github_com/devopsfaith/krakend/validator": {
+      "name": "api-key",
+      "algorithm": "HS256",
+      "key": "mon_super_secret"
+    },
+    "github_com/devopsfaith/krakend/proxy": {
+      "static_headers": {
+        "X-API-KEY": "my-secret-key"
+      }
+    },
+    "github_com/devopsfaith/krakend/router": {
+      "custom_http_headers": {
+        "X-Powered-By": "KrakenD",
+        "X-Gateway": "LOG430-Gateway"
+      }
+    }
+  },
+  "endpoints": [
+    {
+      "endpoint": "/produits/docs",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
         {
-            "endpoint": "/api/produits/{path}",
-            "method": "GET",
-            "output_encoding": "json",
-            "extra_config": {},
-            "backend": [
-                {
-                    "url_pattern": "/{path}",
-                    "host": [
-                        "http://localhost:8004"
-                    ]
-                }
-            ]
-        },
-        {
-            "endpoint": "/api/stock/{path}",
-            "method": "GET",
-            "output_encoding": "json",
-            "backend": [
-                {
-                    "url_pattern": "/{path}",
-                    "host": [
-                        "http://localhost:8006",
-                        "http://localhost:8016"
-                    ],
-                    "extra_config": {
-                        "github.com/devopsfaith/krakend/proxy": {
-                            "load_balancer": {
-                                "name": "round_robin"
-                            }
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            "endpoint": "/api/utilisateurs/{path}",
-            "method": "GET",
-            "output_encoding": "json",
-            "backend": [
-                {
-                    "url_pattern": "/{path}",
-                    "host": [
-                        "http://localhost:8007"
-                    ]
-                }
-            ]
-        },
-        {
-            "endpoint": "/api/ventes/{path}",
-            "method": "GET",
-            "output_encoding": "json",
-            "backend": [
-                {
-                    "url_pattern": "/{path}",
-                    "host": [
-                        "http://localhost:8008"
-                    ]
-                }
-            ]
-        },
-        {
-            "endpoint": "/api/client/{path}",
-            "method": "GET",
-            "output_encoding": "json",
-            "backend": [
-                {
-                    "url_pattern": "/{path}",
-                    "host": [
-                        "http://localhost:8001"
-                    ]
-                }
-            ]
-        },
-        {
-            "endpoint": "/api/commande/{path}",
-            "method": "GET",
-            "output_encoding": "json",
-            "backend": [
-                {
-                    "url_pattern": "/{path}",
-                    "host": [
-                        "http://localhost:8002"
-                    ]
-                }
-            ]
-        },
-        {
-            "endpoint": "/api/panier/{path}",
-            "method": "GET",
-            "output_encoding": "json",
-            "backend": [
-                {
-                    "url_pattern": "/{path}",
-                    "host": [
-                        "http://localhost:8003"
-                    ]
-                }
-            ]
-        },
-        {
-            "endpoint": "/api/rapport/{path}",
-            "method": "GET",
-            "output_encoding": "json",
-            "backend": [
-                {
-                    "url_pattern": "/{path}",
-                    "host": [
-                        "http://localhost:8005"
-                    ]
-                }
-            ]
+          "url_pattern": "/docs",
+          "host": ["http://produits:8000"]
         }
-    ]
+      ]
+    },
+    {
+      "endpoint": "/produits/openapi.json",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/openapi.json",
+          "host": ["http://produits:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/produits/{path}",
+      "method": "GET",
+      "output_encoding": "json",
+      "extra_config": {},
+      "backend": [
+        {
+          "url_pattern": "/{path}",
+          "host": ["http://produits:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/stock/docs",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/docs",
+          "host": ["http://stock:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/stock/openapi.json",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/openapi.json",
+          "host": ["http://stock:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/stock/{path}",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/{path}",
+          "host": ["http://stock1:8000", "http://stock2:8000"],
+          "extra_config": {
+            "github.com/devopsfaith/krakend/proxy": {
+              "load_balancer": {
+                "name": "round_robin"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/utilisateurs/docs",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/docs",
+          "host": ["http://utilisateurs:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/utilisateurs/openapi.json",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/openapi.json",
+          "host": ["http://utilisateurs:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/utilisateurs/{path}",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/{path}",
+          "host": ["http://utilisateurs:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/ventes/docs",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/docs",
+          "host": ["http://ventes:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/ventes/openapi.json",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "backend": [
+        {
+          "url_pattern": "/openapi.json",
+          "host": ["http://ventes:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/ventes/{path}",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/{path}",
+          "host": ["http://ventes:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/client/{path}",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/{path}",
+          "host": ["http://client:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/commande/{path}",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/{path}",
+          "host": ["http://commande:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/panier/{path}",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/{path}",
+          "host": ["http://panier:8000"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/rapport/{path}",
+      "method": "GET",
+      "output_encoding": "json",
+      "backend": [
+        {
+          "url_pattern": "/{path}",
+          "host": ["http://rapport:8000"]
+        }
+      ]
+    }
+  ]
 }
