@@ -14,7 +14,7 @@ J'ai choisi **PostgreSQL** comme moteur de base de données principal.
 - Compatible ACID et transactions fiables
 - Support des types JSON, recherche textuelle, extensions comme PostGIS
 - Outils de sauvegarde/restauration intégrés
-- Intégration facile avec les ORM (SQLAlchemy, Prisma, etc.)
+- Intégration facile avec les ORM (SQLAlchemy)
 
 ## Conséquences
 
